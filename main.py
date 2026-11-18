@@ -5,7 +5,7 @@ from telethon import TelegramClient, events
 API_ID = 33878694
 API_HASH = "7aab68284eea919e6510b832"
 
-# আপনার কাস্টম অটো-রিপ্লাই মেসেজ এখানে সেট করা আছে
+# আপনার কাস্টম অটো-রিপ্লাই মেসেজ
 AUTO_REPLY_MESSAGE = """🦋✨ 𝑨𝑺𝑺𝑨𝑳𝑨𝑴𝑼 𝑨𝑳𝑨𝑰𝑲𝑼𝑴 ✨🦋
 
 🌸 আপনার মেসেজের জন্য আন্তরিক ধন্যবাদ! ❤️
@@ -25,19 +25,20 @@ AUTO_REPLY_MESSAGE = """🦋✨ 𝑨𝑺𝑺𝑨𝑳𝑨𝑴𝑼 𝑨𝑳𝑨�
 # ইউজারবট সেশন শুরু করা
 client = TelegramClient('my_userbot', API_ID, API_HASH)
 
-@client.on(events.NewMessage(incoming=True, private=True))
+@client.on(events.NewMessage(incoming=True))
 async def handle_incoming_message(event):
-    # শুধু প্রাইভেট চ্যাটে কেউ মেসেজ দিলে অটো রিপ্লাই যাবে
-    sender = await event.get_sender()
+    # শুধুমাত্র প্রাইভেট চ্যাট ফিল্টার করার জন্য কোড
+    if not event.is_private:
+        return
     
-    # বট থেকে মেসেজ আসলে ইগনোর করবে
-    if sender.bot:
+    sender = await event.get_sender()
+    if sender and sender.bot:
         return
     
     # অটো-রিপ্লাই পাঠানো
     await event.respond(AUTO_REPLY_MESSAGE)
 
-# মেসেজ দিয়ে অটো-রিপ্লাই টেক্সট আপডেট করার কমান্ড (নিজের চ্যাটে লিখে মেসেজ বদলাতে পারবেন)
+# মেসেজ আপডেট করার কমান্ড
 @client.on(events.NewMessage(pattern='/setmsg (.+)', outgoing=True))
 async def update_message(event):
     global AUTO_REPLY_MESSAGE
@@ -52,4 +53,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-  
+    
